@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\IncomingItemResource\Pages;
-use App\Filament\Resources\IncomingItemResource\RelationManagers;
 use App\Models\IncomingItem;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -59,14 +58,11 @@ class IncomingItemResource extends Resource
                             ->placeholder('Harga Item'),
                     ])
                     ->placeholder('Pilih Item (daftarkan item dahulu jika belum ada)'),
-                TextInput::make('quantity')
+                TextInput::make('qty')
                     ->required()
                     ->label('Jumlah Item Masuk')
                     ->integer()
-                    ->placeholder('Masukkan jumlah item yang masuk'),
-                DatePicker::make('received_at')
-                    ->required()
-                    ->label('Tanggal Penerimaan')
+                    ->placeholder('Masukkan jumlah item yang masuk')
             ]);
     }
 
@@ -78,10 +74,11 @@ class IncomingItemResource extends Resource
                     ->label('Nama Item')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('quantity')
+                TextColumn::make('qty')
                     ->label('Jumlah Item Masuk'),
-                TextColumn::make('received_at')
+                TextColumn::make('created_at')
                     ->label('Tanggal Penerimaan')
+                    ->date('d/m/Y')
                     ->searchable()
                     ->sortable(),
             ])
@@ -89,12 +86,12 @@ class IncomingItemResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+//                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+//                Tables\Actions\BulkActionGroup::make([
+//                    Tables\Actions\DeleteBulkAction::make(),
+//                ]),
             ]);
     }
 
@@ -110,7 +107,7 @@ class IncomingItemResource extends Resource
         return [
             'index' => Pages\ListIncomingItems::route('/'),
             'create' => Pages\CreateIncomingItem::route('/create'),
-            'edit' => Pages\EditIncomingItem::route('/{record}/edit'),
+//            'edit' => Pages\EditIncomingItem::route('/{record}/edit'),
         ];
     }
 }

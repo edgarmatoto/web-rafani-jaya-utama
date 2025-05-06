@@ -12,9 +12,7 @@ class IncomingItem extends Model
 
     protected $table = 'incoming_items';
 
-    public $timestamps = false;
-
-    protected $fillable = ['item_id', 'quantity', 'received_at'];
+    protected $fillable = ['qty'];
 
     public function item(): BelongsTo {
         return $this->belongsTo(Item::class);

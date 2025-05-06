@@ -31,18 +31,18 @@ class ItemResource extends Resource
                 TextInput::make('code')
                     ->required()
                     ->label("Kode")
-                    ->maxLength(20)
+                    ->maxLength(50)
+                    ->unique(Item::class, 'code', ignoreRecord: true)
                     ->placeholder('Kode Item'),
                 TextInput::make('name')
                     ->required()
                     ->label('Nama')
                     ->maxLength(255)
                     ->placeholder('Nama Item'),
-                TextInput::make('stock')
+                TextInput::make('qty')
                     ->required()
                     ->label('Stok')
                     ->integer()
-                    ->maxLength(255)
                     ->placeholder('Stok Item'),
                 TextInput::make('price')
                     ->required()
@@ -64,9 +64,10 @@ class ItemResource extends Resource
                     ->label('Nama Item')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('stock')
+                TextColumn::make('qty')
                     ->label('Stok'),
                 TextColumn::make('price')
+                    ->money('IDR')
                     ->label('Harga per Item'),
             ])
             ->filters([

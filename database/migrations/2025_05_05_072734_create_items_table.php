@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
+            $table->string('code', 50)->unique();
             $table->string('name');
             $table->unsignedBigInteger('qty')->default(0);
             $table->decimal('price', 15, 2)->nullable();

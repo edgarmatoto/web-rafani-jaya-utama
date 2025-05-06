@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Order;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +18,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/{record}/invoice/pdf', function ($id) {
+    $order = Order::findOrFail($id);
+
+    $pdf = Pdf::loadView('pdf.invoice-template', compact('order'));
+    return $pdf->stream('invoice.pdf');
+})->name('order.invoice.pdf');

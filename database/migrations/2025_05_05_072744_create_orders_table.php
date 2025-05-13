@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('customer_phone');
             $table->string('customer_address');
             $table->string('receipt_number', 32)->unique();
-            $table->decimal('total_price', 15, 2)->nullable();
+            $table->decimal('total_price', 15, 2)->nullable()->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

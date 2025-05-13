@@ -79,6 +79,10 @@ class OrderResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
+                Tables\Columns\TextColumn::make('total_discount_amount')
+                    ->label('Potongan')
+                    ->getStateUsing(fn (Order $record) => $record->items->sum('discount_amount') ?? 0)
+                    ->money('IDR'),
                 Tables\Columns\TextColumn::make('total_price')
                     ->label('Total Harga')
                     ->searchable()
@@ -91,7 +95,8 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal')
                     ->date('d/m/Y')
-                    ->toggleable(),
+                    ->toggleable()
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -152,7 +157,7 @@ class OrderResource extends Resource
         return [
             'index' => ListOrders::route('/'),
             'create' => CreateOrder::route('/create'),
-            'edit' => EditOrder::route('/{record}/edit'),
+//            'edit' => EditOrder::route('/{record}/edit'),
         ];
     }
 
@@ -216,17 +221,19 @@ class OrderResource extends Resource
                     ->preload()
                     ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
                         $quantity = $get('qty');
+                        $discount_amount = $get('discount_amount') ?? 0;
+
                         if ($state && $quantity) {
                             $item = Item::find($state);
                             if ($item) {
-                                $set('subtotal', $quantity * $item->price);
+                                $set('subtotal', max(($quantity * $item->price) - $discount_amount, 0));
                             }
                         }
                     })
                     ->distinct()
                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                     ->columnSpan([
-                        'md' => 5,
+                        'md' => 4,
                     ])
                     ->searchable(),
 
@@ -241,10 +248,34 @@ class OrderResource extends Resource
                     ->required()
                     ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
                         $itemId = $get('item_id');
+                        $discount_amount = $get('discount_amount') ?? 0;
+
                         if ($itemId) {
                             $item = Item::find($itemId);
                             if ($item) {
-                                $set('subtotal', $state * $item->price);
+                                $set('subtotal', max(($state * $item->price) - $discount_amount, 0));
+                            }
+                        }
+                    }),
+
+                Forms\Components\TextInput::make('discount_amount')
+                    ->label('Potongan')
+                    ->default(0)
+                    ->reactive()
+                    ->columnSpan([
+                        'md' => 2,
+                    ])
+                    ->afterStateUpdated(function ($state, Forms\Set $set, Forms\Get $get) {
+                        $itemId = $get('item_id');
+                        $quantity = $get('qty') ?? 1;
+
+                        if ($itemId) {
+                            $item = Item::find($itemId);
+                            if ($item) {
+                                $basedSubtotal = $item->price * $quantity;
+                                $discountAmount = $state ?? 0;
+
+                                $set('subtotal', max($basedSubtotal - $discountAmount, 0));
                             }
                         }
                     }),
@@ -256,7 +287,7 @@ class OrderResource extends Resource
                     ->numeric()
                     ->required()
                     ->columnSpan([
-                        'md' => 3,
+                        'md' => 2,
                     ]),
             ])
             ->extraItemActions([
@@ -282,7 +313,6 @@ class OrderResource extends Resource
                 'md' => 10,
             ])
             ->required()
-            ->addable(false)
             ->deletable(false)
             ->reorderable(false)
             ->reorderableWithDragAndDrop(false);

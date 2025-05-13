@@ -17,8 +17,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('item_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->integer('qty');
-            $table->decimal('subtotal', 15, 2);
+            $table->unsignedBigInteger('qty');
+            $table->decimal('discount_amount', 15, 2)->nullable()->default(0);
+            $table->decimal('subtotal', 15, 2)->nullable()->default(0);
             $table->timestamps();
         });
     }

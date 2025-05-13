@@ -12,7 +12,7 @@ class OrderItem extends Model
 
     protected $table = 'order_items';
 
-    protected $fillable = ['item_id', 'qty', 'subtotal'];
+    protected $fillable = ['item_id', 'qty', 'discount_amount', 'subtotal'];
 
     public function item(): BelongsTo
     {

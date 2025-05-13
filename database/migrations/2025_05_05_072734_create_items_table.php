@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('code', 50)->unique();
             $table->string('name');
             $table->unsignedBigInteger('qty')->default(0);
-            $table->decimal('price', 15, 2)->nullable();
+            $table->decimal('price', 15, 2)->nullable()->default(0);
             $table->timestamps();
         });
     }

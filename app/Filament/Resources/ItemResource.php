@@ -43,6 +43,7 @@ class ItemResource extends Resource
                     ->required()
                     ->label('Stok')
                     ->integer()
+                    ->disabled(fn (string $context) => $context === 'edit')
                     ->placeholder('Stok Item'),
                 TextInput::make('price')
                     ->required()
